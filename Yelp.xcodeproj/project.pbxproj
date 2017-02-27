@@ -14,6 +14,9 @@
 		A5CA68931DB3E1EA0085DCF9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5CA68911DB3E1EA0085DCF9 /* Main.storyboard */; };
 		A5CA68951DB3E1EA0085DCF9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5CA68941DB3E1EA0085DCF9 /* Assets.xcassets */; };
 		A5CA68981DB3E1EA0085DCF9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5CA68961DB3E1EA0085DCF9 /* LaunchScreen.storyboard */; };
+		D9D1588B1E5EA00E006AA62C /* BusinessCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D1588A1E5EA00E006AA62C /* BusinessCell.swift */; };
+		D9D1588D1E5ED536006AA62C /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D1588C1E5ED536006AA62C /* FiltersViewController.swift */; };
+		D9D158901E5EDA68006AA62C /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9D1588F1E5EDA68006AA62C /* SwitchCell.swift */; };
 		F91065DC1B85B789A2434556 /* Pods_Yelp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2893DC5CAF45E9E472DFFCC /* Pods_Yelp.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +33,9 @@
 		A5CA68941DB3E1EA0085DCF9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A5CA68971DB3E1EA0085DCF9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A5CA68991DB3E1EA0085DCF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D9D1588A1E5EA00E006AA62C /* BusinessCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessCell.swift; sourceTree = "<group>"; };
+		D9D1588C1E5ED536006AA62C /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		D9D1588F1E5EDA68006AA62C /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				A581AE351DB5398F006544B2 /* BusinessesViewController.swift */,
+				D9D1588C1E5ED536006AA62C /* FiltersViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -97,6 +104,7 @@
 		A5CA688C1DB3E1EA0085DCF9 /* Yelp */ = {
 			isa = PBXGroup;
 			children = (
+				D9D1588E1E5EDA13006AA62C /* Views */,
 				A581AE2E1DB53850006544B2 /* API */,
 				A581AE2F1DB53850006544B2 /* Models */,
 				A581AE301DB53850006544B2 /* View Controllers */,
@@ -116,6 +124,15 @@
 				54E6FC3FD7D2654ED0511482 /* Pods-Yelp.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		D9D1588E1E5EDA13006AA62C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D9D1588A1E5EA00E006AA62C /* BusinessCell.swift */,
+				D9D1588F1E5EDA68006AA62C /* SwitchCell.swift */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +170,7 @@
 				TargetAttributes = {
 					A5CA68891DB3E1EA0085DCF9 = {
 						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = D7RX787JDX;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -241,9 +259,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9D1588B1E5EA00E006AA62C /* BusinessCell.swift in Sources */,
 				A581AE361DB5398F006544B2 /* BusinessesViewController.swift in Sources */,
 				A581AE341DB53945006544B2 /* YelpClient.swift in Sources */,
+				D9D158901E5EDA68006AA62C /* SwitchCell.swift in Sources */,
 				A581AE321DB53860006544B2 /* Business.swift in Sources */,
+				D9D1588D1E5ED536006AA62C /* FiltersViewController.swift in Sources */,
 				A5CA688E1DB3E1EA0085DCF9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,9 +389,11 @@
 			baseConfigurationReference = 6003C10E6EEF3A2ABECCE9B2 /* Pods-Yelp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = D7RX787JDX;
 				INFOPLIST_FILE = Yelp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = coderschool.Yelp;
+				PRODUCT_BUNDLE_IDENTIFIER = vulong.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -381,9 +404,11 @@
 			baseConfigurationReference = 54E6FC3FD7D2654ED0511482 /* Pods-Yelp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = D7RX787JDX;
 				INFOPLIST_FILE = Yelp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = coderschool.Yelp;
+				PRODUCT_BUNDLE_IDENTIFIER = vulong.com;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
