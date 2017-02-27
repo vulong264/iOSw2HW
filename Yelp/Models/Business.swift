@@ -78,7 +78,9 @@ class Business: NSObject {
     class func businesses(array: [NSDictionary]) -> [Business] {
         var businesses = [Business]()
         for dictionary in array {
+            print("dictionary is: \(dictionary)")
             let business = Business(dictionary: dictionary)
+            print("business name is \(business.name)")
             businesses.append(business)
         }
         return businesses

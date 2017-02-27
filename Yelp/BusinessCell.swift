@@ -21,13 +21,18 @@ class BusinessCell: UITableViewCell {
     
     var business: Business! {
         didSet {
-            addressLabel.text = business.address
-            categoryLabel.text = business.categories
-            distanceLabel.text = business.distance
-            businessLabel.text = business.name
+            addressLabel.text = business.address ?? ""
+            categoryLabel.text = business.categories ?? ""
+            distanceLabel.text = business.distance ?? ""
+            businessLabel.text = business.name ?? ""
 //            reviewCount.text = String(business.reviewCount)
-            businessImage.setImageWith(business.imageURL!)
-            reviewImage.setImageWith(business.ratingImageURL!)
+            if (business.imageURL != nil) {
+                businessImage.setImageWith(business.imageURL!)
+            }
+            if (business.ratingImageURL != nil){
+                reviewImage.setImageWith(business.ratingImageURL!)    
+            }
+            
         }
     }
     
