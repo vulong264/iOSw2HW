@@ -217,9 +217,9 @@ class FiltersViewController: UIViewController {
         
         let setting = UserDefaults.standard
         hasDealFilter = (setting.value(forKey: "HAS_OFFER") as? Bool) ?? false
-        selectedSortMode = setting.value(forKey: "SORT_MODE") as! String
-        selectedDistance = setting.value(forKey: "IN_DISTANCE") as! String
-        cruisinePreferred = (setting.value(forKey: "CRUISINE_PREFERRED") as! NSArray) as! [String]
+        selectedSortMode = (setting.value(forKey: "SORT_MODE") as? String) ?? ""
+        selectedDistance = (setting.value(forKey: "IN_DISTANCE") as? String) ?? ""
+        cruisinePreferred = (setting.value(forKey: "CRUISINE_PREFERRED") as? NSArray as! [String]?) ?? [String]()
         
         // Do any additional setup after loading the view.
     }
