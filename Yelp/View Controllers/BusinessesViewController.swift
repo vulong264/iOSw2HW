@@ -80,9 +80,14 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate, 
         return cell
     }
     
-    func filtersViewController(filterVC: FiltersViewController, didUpdateFilter filter: [String]) {
+    func filtersViewController(filterVC: FiltersViewController, didUpdateFilter filter: [String], sortMode: YelpSortMode, deals: Bool) {
         print("got new filters \(filter)")
-        search(keyword: "", filters: filter)
+//        search(keyword: "", filters: filter)
+//        fullSearch(keyword: "", filters: filter, sort: sortMode, deals: deals)
+    }
+    
+    func filtersViewController(filterVC: FiltersViewController, didUpdateFilter filter: [String],  sortmode: YelpSortMode, hasDeals: Bool, distance: String ){
+        fullSearch(keyword: searchBar.text ?? "", filters: filter, sort: sortmode, deals: hasDeals, distance: distance)
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
@@ -100,6 +105,15 @@ extension BusinessesViewController: UITableViewDataSource, UITableViewDelegate, 
     }
     func search(keyword: String, filters: [String]){
         Business.search(with: keyword, sort: nil, categories: filters, deals: nil){(businesses: [Business]?, error: Error?) in
+            if let businesses = businesses {
+                self.businesses = businesses
+                self.tableView.reloadData()
+            }
+        }
+    }
+    func fullSearch(keyword: String, filters: [String], sort: YelpSortMode, deals: Bool, distance: String){
+        
+        Business.search(with: keyword, sort: YelpSortMode(rawValue: sort.rawValue), categories: filters, deals: deals){(businesses: [Business]?, error: Error?) in
             if let businesses = businesses {
                 self.businesses = businesses
                 self.tableView.reloadData()

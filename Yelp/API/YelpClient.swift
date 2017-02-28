@@ -56,6 +56,10 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         var parameters: [String : AnyObject] = ["term": term as AnyObject, "ll": "37.785771,-122.406165" as AnyObject]
 
         if sort != nil {
+            if sort!.rawValue > YelpSortMode.bestMatched.rawValue {
+                parameters["offset"] = 2 as AnyObject?
+                parameters["limit"] = 20 as AnyObject?
+            }
             parameters["sort"] = sort!.rawValue as AnyObject?
         }
 

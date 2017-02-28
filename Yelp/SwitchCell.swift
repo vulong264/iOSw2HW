@@ -11,7 +11,8 @@ protocol SwitchCellDelegate {
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool)
 }
 class SwitchCell: UITableViewCell {
-
+    var isDealCell = false
+    var cruisineCode = ""
     @IBOutlet weak var categoryLabel: UILabel!
     
     @IBOutlet weak var switchButton: UISwitch!
@@ -23,6 +24,10 @@ class SwitchCell: UITableViewCell {
         // Initialization code
     }
 
+    func setDealCell(){
+        isDealCell = true
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
@@ -30,7 +35,7 @@ class SwitchCell: UITableViewCell {
     }
 
     @IBAction func onChange(_ sender: UISwitch) {
-        print("Switch changed to \(sender.isOn)")
+//        print("Switch changed to \(sender.isOn)")
         delegate.switchCell(switchCell: self, didChangeValue: sender.isOn)
     }
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol FiltersViewControllerDelegate {
-    func filtersViewController(filterVC: FiltersViewController, didUpdateFilter filter: [String])
+    func filtersViewController(filterVC: FiltersViewController, didUpdateFilter filter: [String],  sortmode: YelpSortMode, hasDeals: Bool, distance: String )
 }
 class FiltersViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -184,13 +184,43 @@ class FiltersViewController: UIViewController {
          ["name" : "Wraps", "code": "wraps"],
          ["name" : "Yugoslav", "code": "yugoslav"]]
     var switchStates = [Int: Bool]()
+    
+    let Distances: [[String: String]] =
+        [["display" : "0.3 km", "value": "3"],
+         ["display" : "1 km", "value": "10"],
+         ["display" : "5 km", "value": "50"],
+         ["display" : "10 km", "value": "100"]
+         ]
+
+    let SortModes: [[String: String]] =
+        [["display" : "Best Matched", "value" : "\(YelpSortMode.bestMatched.rawValue)"],
+         ["display" : "Distance", "value" : "\(YelpSortMode.distance.rawValue)"],
+         ["display" : "Highest Rated", "value" : "\(YelpSortMode.highestRated.rawValue)"]
+    ]
+    
     var delegate: FiltersViewControllerDelegate!
+    var hasDealFilter = false
+    var selectedDistance = ""
+    var selectedSortMode = ""
+    var lastSelectedDistanceIP: IndexPath?
+    var lastSelectedSortIP: IndexPath?
+    var cruisinePreferred = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.delegate = self
         tableView.dataSource = self
+        
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        let setting = UserDefaults.standard
+        hasDealFilter = (setting.value(forKey: "HAS_OFFER") as? Bool) ?? false
+        selectedSortMode = setting.value(forKey: "SORT_MODE") as! String
+        selectedDistance = setting.value(forKey: "IN_DISTANCE") as! String
+        cruisinePreferred = (setting.value(forKey: "CRUISINE_PREFERRED") as! NSArray) as! [String]
+        
         // Do any additional setup after loading the view.
     }
 
@@ -203,42 +233,175 @@ class FiltersViewController: UIViewController {
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
-
+    
     @IBAction func onSave(_ sender: UIBarButtonItem) {
         var filters = [String]()
-        for(row, isSelected) in switchStates{
-            if isSelected {
-                filters.append(categories[row]["code"]!)
-            }
-        }
+//        for(row, isSelected) in switchStates{
+//            if isSelected {
+//                filters.append(categories[row]["code"]!)
+//            }
+//        }
+        filters = cruisinePreferred
 //        print(filters)
-        if filters.count > 0
-        {
-            delegate.filtersViewController(filterVC: self, didUpdateFilter: filters)
-        }
+//        if filters.count > 0
+//        {
+        let sortSelect = Int(selectedSortMode) ?? 0
+        let sortMode = YelpSortMode(rawValue: sortSelect)
+        
+            delegate.filtersViewController(filterVC: self, didUpdateFilter: filters, sortmode: sortMode! , hasDeals: hasDealFilter, distance: selectedDistance)
+//        }
         dismiss(animated: true, completion: nil)
     }
 }
 
-extension FiltersViewController: UITableViewDelegate,UITableViewDataSource, SwitchCellDelegate{
+extension FiltersViewController: UITableViewDelegate,UITableViewDataSource, SwitchCellDelegate, SelectCellDelegate{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "switchCell") as! SwitchCell
-        
-        cell.categoryLabel.text = categories[indexPath.row]["name"]
-        cell.switchButton.isOn = switchStates[indexPath.row] ?? false
-        cell.delegate = self
-        
-        return cell
+        switch (indexPath as NSIndexPath).section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "switchCell") as! SwitchCell
+            cell.categoryLabel.text = "Offering a deal"
+            cell.switchButton.isOn = hasDealFilter
+            cell.setDealCell()
+            cell.delegate = self
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell") as! SelectCell
+            cell.delegate = self
+            cell.valueLabel.text = Distances[indexPath.row]["display"]
+            if (selectedDistance == Distances[indexPath.row]["value"]){
+                cell.accessoryType = .checkmark
+                lastSelectedDistanceIP = indexPath
+            }
+            return cell
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCell") as! SelectCell
+            cell.delegate = self
+            cell.valueLabel.text = SortModes[indexPath.row]["display"]
+            if (selectedSortMode == SortModes[indexPath.row]["value"]){
+                cell.accessoryType = .checkmark
+                lastSelectedSortIP = indexPath
+            }
+            return cell
+        case 3:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "switchCell") as! SwitchCell
+            
+            cell.categoryLabel.text = categories[indexPath.row]["name"]
+            let code = categories[indexPath.row]["code"]!
+            cell.cruisineCode = code
+//            cell.switchButton.isOn = switchStates[indexPath.row] ?? false
+            
+            if (cruisinePreferred.index(of: code) != nil) {
+                cell.switchButton.isOn = true
+            } else
+            {
+                cell.switchButton.isOn = false
+            }
+            cell.delegate = self
+            
+            return cell
+        default:
+            return UITableViewCell()
+        }
         
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        switch section {
+        case 0: return 1
+        case 1: return Distances.count
+        case 2: return SortModes.count
+        case 3: return categories.count
+        default: return 0
+        }
+        
     }
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 4
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+            case 0 :
+                return "Deals"
+            case 1:
+                return "Distance"
+            case 2:
+                return "Sort by"
+            default:
+                return "Category"
+        }
+    }
+
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if (indexPath as NSIndexPath).section == 1 {
+            selectedDistance = Distances[(indexPath as NSIndexPath).row]["value"]!
+            print("Selected Distance Fileter \(selectedDistance)")
+            
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            if indexPath.row != lastSelectedDistanceIP?.row {
+                if let lastSelectedDistance = lastSelectedDistanceIP {
+                    let oldCell = tableView.cellForRow(at: lastSelectedDistance)
+                    oldCell?.accessoryType = .none
+                }
+                
+                let newCell = tableView.cellForRow(at: indexPath)
+                newCell?.accessoryType = .checkmark
+                
+                lastSelectedDistanceIP = indexPath
+                
+                let setting = UserDefaults.standard
+                setting.set(selectedDistance, forKey: "IN_DISTANCE")
+            }
+        }
+        else if(indexPath as NSIndexPath).section == 2 {
+            selectedSortMode = SortModes[(indexPath as NSIndexPath).row]["value"]!
+            print("Selected Sort Mode: \(selectedSortMode)")
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            if indexPath.row != lastSelectedSortIP?.row {
+                if let lastSelectedSort = lastSelectedSortIP {
+                    let oldCell = tableView.cellForRow(at: lastSelectedSort)
+                    oldCell?.accessoryType = .none
+                }
+                
+                let newCell = tableView.cellForRow(at: indexPath)
+                newCell?.accessoryType = .checkmark
+                
+                lastSelectedSortIP = indexPath
+                
+                let setting = UserDefaults.standard
+                setting.set(selectedSortMode, forKey: "SORT_MODE")
+            }
+        }
+
+    }
     func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
-        print("switchCell is fired")
-        let ip = tableView.indexPath(for: switchCell)
-        switchStates[ip!.row] = value
+        if(switchCell.isDealCell){
+            hasDealFilter = value
+            let setting = UserDefaults.standard
+            setting.set(value, forKey: "HAS_OFFER")
+        }
+        else{
+            let ip = tableView.indexPath(for: switchCell)
+            switchStates[ip!.row] = value
+            if(value == true){
+                cruisinePreferred.append(switchCell.cruisineCode)
+            }
+            else {
+                let index = cruisinePreferred.index(of: switchCell.cruisineCode)
+                if (index! >= 0) {
+                    cruisinePreferred.remove(at: index!)
+                }
+            }
+            let setting = UserDefaults.standard
+            setting.set(cruisinePreferred, forKey: "CRUISINE_PREFERRED")
+        }
+    }
+    func selectCell(selectCell: SelectCell, isSelected value: Bool) {
+//        print("SelectCell is clicked")
+        print(selectCell.valueLabel.text ?? "null VALUE")
     }
 }
